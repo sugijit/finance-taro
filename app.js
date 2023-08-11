@@ -20,7 +20,7 @@ var appController = (function (uiController, financeController) {
   });
 
   document.addEventListener("keypress", function (event) {
-    if (event.key == 13) {
+    if (event.key === "Enter") {
       ctrlAddItem();
     }
   });
