@@ -7,6 +7,10 @@ var uiController = (function () {
     addBtn: ".add__btn",
     incomeList: ".income__list",
     expenseList: ".expenses__list",
+    tusuvLabel: ".budget__value",
+    incomeLabel: ".budget__income--value",
+    expenseLabel: ".budget__expenses--value",
+    percentageLabel: ".budget__expenses--percentage",
   };
 
   return {
@@ -38,6 +42,21 @@ var uiController = (function () {
       });
 
       fieldsArr[0].focus();
+    },
+
+    tusviigUzuuleh: function (tusuv) {
+      document.querySelector(DOMstrings.tusuvLabel).textContent = tusuv.tusuv;
+      document.querySelector(DOMstrings.incomeLabel).textContent =
+        tusuv.totalInc;
+      document.querySelector(DOMstrings.expenseLabel).textContent =
+        tusuv.totalExp;
+      if (tusuv.huvi !== 0) {
+        document.querySelector(DOMstrings.percentageLabel).textContent =
+          tusuv.huvi + "%";
+      } else {
+        document.querySelector(DOMstrings.percentageLabel).textContent =
+          tusuv.huvi;
+      }
     },
 
     addListItem: function (item, type) {
@@ -100,7 +119,6 @@ var financeController = (function () {
     },
 
     tusuv: 0,
-
     huvi: 0,
   };
 
@@ -110,7 +128,7 @@ var financeController = (function () {
       calculateTotal("exp");
 
       data.tusuv = data.totals.inc - data.totals.exp;
-      data.huvi = Math.round(data.totals.inc / (data.totals.exp * 100));
+      data.huvi = Math.round((data.totals.exp * 100) / data.totals.inc);
     },
 
     tusuviigAvah: function () {
@@ -161,7 +179,7 @@ var appController = (function (uiController, financeController) {
 
       financeController.tusuvTootsooloh();
       var tusuv = financeController.tusuviigAvah();
-      console.log(tusuv);
+      uiController.tusviigUzuuleh(tusuv);
     }
   };
 
@@ -178,6 +196,12 @@ var appController = (function (uiController, financeController) {
   return {
     init: function () {
       console.log("app ehellee...");
+      uiController.tusviigUzuuleh({
+        tusuv: 0,
+        huvi: 0,
+        totalInc: 0,
+        totalExp: 0,
+      });
       setupEventListeners();
     },
   };
