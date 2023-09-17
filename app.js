@@ -13,6 +13,7 @@ var uiController = (function () {
     percentageLabel: ".budget__expenses--percentage",
     containerDiv: ".container",
     expensePercentageLabel: ".item__percentage",
+    dateLabel: ".budget__title",
   };
 
   var nodeListForeach = function (list, callback) {
@@ -21,7 +22,39 @@ var uiController = (function () {
     }
   };
 
+  var formatMoney = function (too, type) {
+    too = "" + too;
+    var b = too.split("").reverse().join("");
+    var c = "";
+    var count = 1;
+
+    for (var i = 0; i < b.length; i++) {
+      c = c + b[i];
+      if (count % 3 === 0) {
+        c = c + ",";
+      }
+      count++;
+    }
+
+    var z = c.split("").reverse().join("");
+
+    if (z[0] === ",") {
+      z = z.substring(1);
+    }
+
+    if (type === "inc") z = "+ " + z;
+    else z = "- " + z;
+
+    return z;
+  };
+
   return {
+    displayDate: function () {
+      var today = new Date();
+      document.querySelector(DOMstrings.dateLabel).textContent =
+        today.getFullYear() + "年" + today.getMonth() + "月の家計簿";
+    },
+
     getInput: function () {
       return {
         type: document.querySelector(DOMstrings.inputType).value, //inc, exp
@@ -63,11 +96,21 @@ var uiController = (function () {
     },
 
     tusviigUzuuleh: function (tusuv) {
-      document.querySelector(DOMstrings.tusuvLabel).textContent = tusuv.tusuv;
-      document.querySelector(DOMstrings.incomeLabel).textContent =
-        tusuv.totalInc;
-      document.querySelector(DOMstrings.expenseLabel).textContent =
-        tusuv.totalExp;
+      var type;
+      if (tusuv.tusuv > 0) type = "inc";
+      else type = "exp";
+      document.querySelector(DOMstrings.tusuvLabel).textContent = formatMoney(
+        tusuv.tusuv,
+        type
+      );
+      document.querySelector(DOMstrings.incomeLabel).textContent = formatMoney(
+        tusuv.totalInc,
+        "inc"
+      );
+      document.querySelector(DOMstrings.expenseLabel).textContent = formatMoney(
+        tusuv.totalExp,
+        "exp"
+      );
       if (tusuv.huvi !== 0) {
         document.querySelector(DOMstrings.percentageLabel).textContent =
           tusuv.huvi + "%";
@@ -99,7 +142,7 @@ var uiController = (function () {
 
       html = html.replace("%id%", item.id);
       html = html.replace("%%DESCRIPTION%%", item.description);
-      html = html.replace("$$VALUE$$", item.value);
+      html = html.replace("$$VALUE$$", formatMoney(item.value, type));
       //belgtesen HTML-ee DOM ruu hiij ugnu
 
       document.querySelector(list).insertAdjacentHTML("beforeend", html);
@@ -285,6 +328,7 @@ var appController = (function (uiController, financeController) {
   return {
     init: function () {
       console.log("app ehellee...");
+      uiController.displayDate();
       uiController.tusviigUzuuleh({
         tusuv: 0,
         huvi: 0,
