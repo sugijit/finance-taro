@@ -55,6 +55,22 @@ var uiController = (function () {
         today.getFullYear() + "年" + today.getMonth() + "月の家計簿";
     },
 
+    changeType: function () {
+      var fields = document.querySelectorAll(
+        DOMstrings.inputType +
+          "," +
+          DOMstrings.inputDescription +
+          "," +
+          DOMstrings.inputValue
+      );
+
+      nodeListForeach(fields, function (el) {
+        el.classList.toggle("red-focus");
+      });
+
+      document.querySelector(DOMstrings.addBtn).classList.toggle("red");
+    },
+
     getInput: function () {
       return {
         type: document.querySelector(DOMstrings.inputType).value, //inc, exp
@@ -306,6 +322,10 @@ var appController = (function (uiController, financeController) {
     document.addEventListener("keypress", function (event) {
       if (event.key === "Enter") ctrlAddItem();
     });
+
+    document
+      .querySelector(DOM.inputType)
+      .addEventListener("change", uiController.changeType);
 
     document
       .querySelector(DOM.containerDiv)
